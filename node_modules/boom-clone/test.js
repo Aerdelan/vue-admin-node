@@ -1,0 +1,35 @@
+var test = require('tape')
+var Boom = require('boom')
+var boomClone = require('./')
+
+test('should clone an error', function (t) {
+  t.plan(3)
+  var err = new Error('Boom!')
+  var clone = boomClone(err)
+  t.ok(err !== clone)
+  t.notOk(err.isBoom)
+  t.ok(clone.isBoom)
+  t.end()
+})
+
+test('should clone an error and set statusCode/message', function (t) {
+  t.plan(5)
+  var err = new Error('Boom!')
+  var clone = boomClone(err, 404, 'Did not find')
+  t.ok(err !== clone)
+  t.notOk(err.isBoom)
+  t.ok(clone.isBoom)
+  t.equal(clone.output.statusCode, 404)
+  t.equal(clone.message, 'Did not find: Boom!')
+  t.end()
+})
+
+test('should clone a boom', function (t) {
+  t.plan(3)
+  var err = Boom.create(500)
+  var clone = boomClone(err)
+  t.ok(err !== clone)
+  t.ok(err.isBoom)
+  t.ok(clone.isBoom)
+  t.end()
+})

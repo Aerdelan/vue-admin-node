@@ -1,0 +1,25 @@
+/*
+ * @Author: Aerdelan 1874863790@qq.com
+ * @Date: 2023-04-25 10:41:30
+ * @LastEditors: Aerdelan 1874863790@qq.com
+ * @LastEditTime: 2023-04-25 10:43:03
+ * @FilePath: \代码\2.代码模块化\models\BookModel.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+const mongoose = require('mongoose')
+// 这里放连接成功之后要写的方法
+let BookSchema = new mongoose.Schema({
+    name: String,
+    author: String,
+    price: Number,
+    is_hot: Boolean,
+    tags: Array,
+    put_time: Date
+})
+// 创建模型对象
+// 对文档操作的封装对象,第一个是集合名称，第二个是对象
+let BookModel = mongoose.model('books', BookSchema)
+
+
+// 暴露模型对象
+module.exports = BookModel;
