@@ -2,7 +2,7 @@
  * @Author: Aerdelan 1874863790@qq.com
  * @Date: 2023-04-25 11:55:55
  * @LastEditors: Aerdelan 1874863790@qq.com
- * @LastEditTime: 2023-05-01 18:25:40
+ * @LastEditTime: 2023-05-09 10:57:55
  * @FilePath: \案例一\app.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -16,6 +16,7 @@ process.env.JWT_SECRET = 'HmacSHA256';
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const textRouter = require('./routes/text');
+const imageRouter = require('./routes/image');
 var app = express();
 // 允许所有来源的请求
 app.use(cors());
@@ -30,7 +31,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/', usersRouter);
+app.use('/', imageRouter);
 app.use('/', textRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

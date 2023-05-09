@@ -2,7 +2,7 @@
  * @Author: Aerdelan 1874863790@qq.com
  * @Date: 2023-04-26 16:29:08
  * @LastEditors: Aerdelan 1874863790@qq.com
- * @LastEditTime: 2023-05-04 14:47:59
+ * @LastEditTime: 2023-05-05 16:29:49
  * @FilePath: \案例一\routes\text.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -75,33 +75,44 @@ router.post('/articles/new', async (req, res, next) => {
 // PUT请求，修改文章
 router.put('/articles/edit/:id', async (req, res, next) => {
     const id = req.params.id;
+
     const schema = Joi.object({
         title: Joi.string().required(),
         content: Joi.string().required(),
+        tags: Joi.array().items(Joi.string()).required(),
+        body: Joi.string().required(),
     });
-
-    //检查headers中是否有token
+    console.log(req.body);
+    // 检查 headers 中是否有 token
     const token = req.headers['authorization'];
     if (!token) {
         return next(boom.unauthorized('未登录用户无权操作'));
     }
 
     try {
-        //验证token
+        // 验证 token
         const decoded = await jwt.verify(token, process.env.JWT_SECRET);
 
-        await schema.validateAsync(req.body);
-        const article = await ArticleModel.findByIdAndUpdate(id, req.body);
+        // 验证请求体数据
+        const { error } = schema.validate(req.body);
+        if (error) {
+            throw boom.badRequest(error.details[0].message);
+        }
+
+        // 更新文章
+        const article = await ArticleModel.findByIdAndUpdate(id, req.body, { new: true });
+        if (!article) {
+            throw boom.notFound('文章修改失败：ID不存在');
+        }
+
         console.log(article, '文章修改成功');
         res.send({ message: '文章修改成功' });
     } catch (err) {
         console.error(err);
-        if (err.name === 'CastError') {
-            return next(boom.badRequest('文章修改失败：ID不存在'));
-        }
         next(boom.internal('修改文章失败'));
     }
 });
+
 // DELETE请求，删除文章
 router.delete('/articles/delete/:id', async (req, res, next) => {
     const id = req.params.id;
