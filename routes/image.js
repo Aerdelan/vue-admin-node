@@ -47,15 +47,16 @@ async function authenticateToken(req, res, next) {
 }
 
 // 处理添加图片的请求
-router.post('/addImage', authenticateToken, validateImage, throttleMiddleware, upload.single('image'), function (req, res) {
+router.post('/addImage', authenticateToken, validateImage, throttleMiddleware, upload.single('image', { limits: { fileSize: 5000000 } }), function (req, res) {
     // 获取上传的文件信息
     const file = req.file;
     if (!file) {
         return res.status(400).send('Please upload a file');
     }
     // 返回上传成功的信息
-    res.send(`File uploaded successfully: ${file.filename}`);
+    res.send({ message: 'File uploaded successfully', filename: file.filename });
 });
+
 
 // 处理获取所有图片路径的请求
 router.get('/getAllImagePaths', authenticateToken, throttleMiddleware, function (req, res) {
